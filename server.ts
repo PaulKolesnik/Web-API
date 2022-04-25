@@ -6,7 +6,7 @@ const app = express();
 const corsOptions = {
   origin: "http://localhost:8081"
 };
-
+//XXoH5GsWCVIldJ6l
 app.use(cors(corsOptions));
 
 // parse requests of content-type - application/json
@@ -16,11 +16,32 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
+const dbConfig = require("./app/config/db.config.ts");
+
+const mongoose = require("mongoose");
+mongoose.Promise = global.Promise;
+
+const db = dbConfig.url;
+
+mongoose.connect(db, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+  .then(() => {
+    console.log("Connected to the database!");
+  })
+  .catch(err => {
+    console.log("Cannot connect to the database!", err);
+    process.exit();
+  });
+
 // looby route
 app.get("/", (req, res) => {
   res.json({ WebApi: "Sce First Lab." });
 });
 
+import auth_route = require("./app/routes/auth-routes");
+app.use("/auth", auth_route);
 
 
 // set port, listen for requests
